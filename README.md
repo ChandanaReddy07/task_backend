@@ -1,5 +1,5 @@
 # task_backend
-<h1 align="center">Social Media app✏️</h1>
+<h1 align="center">Social Media app💫</h1>
  A simple social media list app's backend with following features-
 
 -   User authentication using JWT 
