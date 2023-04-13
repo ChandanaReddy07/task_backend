@@ -14,7 +14,9 @@ app.use(cookieParser());
 app.use(cors());
 
 app.use("/api",Routess)
-
+app.get("/",(req,res)=>{
+    res.send("App is up and running!!")
+})
 mongoose.connect( process.env.DATABASE , {
     useNewUrlParser: true,
     useUnifiedTopology: true,
