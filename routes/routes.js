@@ -9,7 +9,7 @@ const jwt = require('jsonwebtoken');
 // Function to verify JWT token
 const verifyToken = (token) => {
     return new Promise((resolve, reject) => {
-        jwt.verify(token, 'seesrgrgfdd', (err, decoded) => {
+        jwt.verify(token, process.env.SECRET , (err, decoded) => {
             if (err) {
                 reject(err)
             } else {
@@ -23,11 +23,7 @@ const verifyToken = (token) => {
 const authenticate = async (req, res, next) => {
     try {
 
-        const token = req.headers.authorization
-        const bearer = token.split(" ")[1];
-
-
-        console.log("token at me ", bearer)
+        const token = req.headers.authorization;
 
         if (! token) {
             return res.status(401).json({error: 'Unauthorized'});
@@ -50,6 +46,12 @@ const authenticate = async (req, res, next) => {
 router.post('/authenticate', async (req, res) => {
     const {email, password} = req.body;
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({error: 'Invalid email address'});
+    }
+
     // Find the user by email
     var user = await User.findOne({email});
     if (! user) {
@@ -67,7 +69,7 @@ router.post('/authenticate', async (req, res) => {
 
     var token = jwt.sign({
         user: user
-    }, "seesrgrgfdd", {expiresIn: '1h'});
+    }, process.env.SECRET , {expiresIn: '1h'});
 
     // Return the JWT token in the response
     res.status(200).json({token, user: {
