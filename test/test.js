@@ -16,10 +16,10 @@ describe('Authentication and Follow User', () => {
 
     before(async () => {
         // Create a new user for testing
-        const hashedPassword = await bcrypt.hash('krishna', 10);
-        const hashedPassword2 = await bcrypt.hash('radha', 10);
-        current_user = new User({ email: 'k@gmail.com', password: hashedPassword });
-        user2follow = new User({ email: 'r@gmail.com', password: hashedPassword2 });
+        const hashedPassword = await bcrypt.hash('crishna', 10);
+        const hashedPassword2 = await bcrypt.hash('dadha', 10);
+        current_user = new User({ email: 'c@gmail.com', password: hashedPassword });
+        user2follow = new User({ email: 'd@gmail.com', password: hashedPassword2 });
 
         //invalids 
         invalid_id="6437a195cf78ed8ddc7e6f21";
@@ -39,7 +39,8 @@ describe('Authentication and Follow User', () => {
 
     after(async () => {
         // Remove the user created during testing
-        await User.deleteOne({ email: 'test@example.com' });
+        await User.deleteOne({ email: 'c@gmail.com' });
+        await User.deleteOne({ email: 'd@gmail.com' });
     });
 
 

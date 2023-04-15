@@ -125,7 +125,7 @@ router.post('/unfollow/:id', authenticate, async (req, res) => {
         if (! userToUnfollow) {
             return res.status(404).json({error: 'User not found'});
         }
-        console.log(currentUser)
+        
               if (!currentUser.following.includes(req.params.id)) {
             return res.status(400).json({ error: 'You are not following this user' });
           }
