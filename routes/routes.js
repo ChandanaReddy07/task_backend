@@ -120,6 +120,9 @@ router.post('/unfollow/:id', authenticate, async (req, res) => {
         if (! userToUnfollow) {
             return res.status(404).json({error: 'User not found'});
         }
+        if (!currentUser.following.includes(req.params.id)) {
+            return res.status(400).json({ error: 'You are not following this user' });
+          }
         const updatedUser = await User.findOneAndUpdate({
             _id: req.params.id
         }, {
@@ -137,7 +140,7 @@ router.post('/unfollow/:id', authenticate, async (req, res) => {
         // console.log(updatedUser)
         // console.log(updatedUser1)
 
-        res.json(updatedUser);
+        res.status(200).json({"you":updatedUser1 , "userTofollow": updatedUser});
     } catch (err) {
         res.status(500).json({error: 'Failed to unfollow user'});
     }
