@@ -82,13 +82,13 @@ router.post('/authenticate', async (req, res) => {
 router.post('/follow/:id', authenticate, async (req, res) => {
     try {
         const currentUser = await User.findById(req.user.user._id);
-        console.log(currentUser)
+        
         const userToFollow = await User.findById(req.params.id);
 
         if (! userToFollow) {
             return res.status(404).json({error: 'User not found'});
         }
-        console.log(currentUser._id)
+       
         const ass = await User.updateOne({
             _id: userToFollow._id
         }, {
@@ -104,7 +104,7 @@ router.post('/follow/:id', authenticate, async (req, res) => {
             }
         });
 
-        console.log('updatedUserToFollow:', ass);
+       
 
         res.json(ass);
     } catch (err) {
@@ -134,8 +134,8 @@ router.post('/unfollow/:id', authenticate, async (req, res) => {
                 following: req.params.id
             }
         }, {new: true});
-        console.log(updatedUser)
-        console.log(updatedUser1)
+        // console.log(updatedUser)
+        // console.log(updatedUser1)
 
         res.json(updatedUser);
     } catch (err) {
