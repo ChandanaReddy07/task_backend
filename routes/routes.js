@@ -85,28 +85,33 @@ router.post('/follow/:id', authenticate, async (req, res) => {
         
         const userToFollow = await User.findById(req.params.id);
 
+  
+        if (currentUser.following.includes(req.params.id)) {
+      return res.status(400).json({ error: 'You are already following this user' });
+    }
+
         if (! userToFollow) {
             return res.status(404).json({error: 'User not found'});
         }
        
-        const ass = await User.updateOne({
-            _id: userToFollow._id
+        const updatedUser = await User.findOneAndUpdate({
+            _id: req.params.id
         }, {
-            $addToSet: {
+            $push: {
                 followers: currentUser._id
             }
-        });
-        const bss = await User.updateOne({
+        }, {new: true});
+        const updatedUser1 = await User.findOneAndUpdate({
             _id: currentUser._id
         }, {
-            $addToSet: {
-                following: userToFollow._id
+            $push: {
+                following: req.params.id
             }
-        });
+        }, {new: true});
 
-       
 
-        res.json(ass);
+
+        res.status(200).json({"message":"succesfully followed","you":updatedUser1 , "userTofollow": updatedUser});
     } catch (err) {
         res.status(500).json({error: 'Failed to follow user'});
     }
@@ -120,7 +125,8 @@ router.post('/unfollow/:id', authenticate, async (req, res) => {
         if (! userToUnfollow) {
             return res.status(404).json({error: 'User not found'});
         }
-        if (!currentUser.following.includes(req.params.id)) {
+        console.log(currentUser)
+              if (!currentUser.following.includes(req.params.id)) {
             return res.status(400).json({ error: 'You are not following this user' });
           }
         const updatedUser = await User.findOneAndUpdate({
@@ -140,7 +146,7 @@ router.post('/unfollow/:id', authenticate, async (req, res) => {
         // console.log(updatedUser)
         // console.log(updatedUser1)
 
-        res.status(200).json({"you":updatedUser1 , "userTofollow": updatedUser});
+        res.status(200).json({"message":"succesfully unfollowed","you":updatedUser1 , "userToUnfollow": updatedUser});
     } catch (err) {
         res.status(500).json({error: 'Failed to unfollow user'});
     }
@@ -152,7 +158,7 @@ router.get('/user', authenticate, async (req, res) => {
         const currentUser = req.user.user;
         const user = await User.findById(currentUser._id).populate('following', '_id username').populate('followers', '_id username');
         const {_id, username, following, followers} = user;
-        res.json({_id, username, following, followers});
+        res.status(200).json({_id, username, following, followers});
     } catch (err) {
         res.status(500).json({error: 'Failed to get user profile'});
     }
@@ -181,7 +187,7 @@ router.post('/posts', authenticate, async (req, res) => {
 
         const post = new Post({user: currentUser._id, title, description, createdTime});
         await post.save();
-        res.json(post);
+        res.status(200).json(post);
     } catch (err) {
         res.status(500).json({error: 'Failed to create post'});
     }
@@ -202,7 +208,7 @@ router.delete('/posts/:id', authenticate, async (req, res) => {
         const result = await post.deleteOne({_id: req.params.id});
 
         if (result) 
-            res.json({message: 'Post deleted successfully'});
+            res.status(200).json({message: 'Post deleted successfully'});
         
 
 
